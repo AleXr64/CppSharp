@@ -412,7 +412,12 @@ namespace CppSharp
 
             driver.Setup();
 
-            if(driver.Options.Verbose)
+            if (!options.Modules.Any(x => x.IsAnonymousNamespace == true))
+                {
+                    options.Modules.First(x => x != options.SystemModule).IsAnonymousNamespace = true;
+                }
+
+            if (driver.Options.Verbose)
                 Diagnostics.Level = DiagnosticKind.Debug;
 
             if (!options.Quiet)

@@ -176,7 +176,15 @@ namespace CppSharp.Passes
             if (Options.IsCLIGenerator)
                 return @namespace is Function ? @namespace.Namespace : @namespace;
 
-            var module = @namespace.TranslationUnit.Module;
+            Module module;
+            if ( @namespace.TranslationUnit.Module!= null)
+                {
+                    module = @namespace.TranslationUnit.Module;
+                }
+            else
+                {
+                    module = Options.Modules.First(x => x.IsAnonymousNamespace);
+                }
             if (namespacesDelegates.ContainsKey(module))
                 return namespacesDelegates[module];
 

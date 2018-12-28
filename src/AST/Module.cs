@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace CppSharp.AST
 {
     public class Module
-    {
+    {public bool IsAnonymousNamespace { get; set; }
         public List<string> IncludeDirs { get; } = new List<string>();
         public List<string> Headers { get; } = new List<string>();
         public List<string> LibraryDirs { get; } = new List<string>();
