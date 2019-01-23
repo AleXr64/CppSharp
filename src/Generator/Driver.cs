@@ -1,7 +1,6 @@
 using System;
 using System.CodeDom.Compiler;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -73,7 +72,7 @@ namespace CppSharp
         }
 
         public void SetupTypeMaps() =>
-            Context.TypeMaps = new TypeMapDatabase(Context.ASTContext, Options.GeneratorKind);
+            Context.TypeMaps = new TypeMapDatabase(Context);
 
         void OnSourceFileParsed(IEnumerable<string> files, ParserResult result)
         {
@@ -97,7 +96,9 @@ namespace CppSharp
                     hasParsingErrors = true;
                     break;
                 case ParserResultKind.FileNotFound:
-                    Diagnostics.Error("A file from '{0}' was not found", string.Join(",", files));
+                    Diagnostics.Error("File{0} not found: '{1}'",
+                        (files.Count() > 1) ? "s" : "",  string.Join(",", files));
+                    hasParsingErrors = true;
                     break;
             }
 

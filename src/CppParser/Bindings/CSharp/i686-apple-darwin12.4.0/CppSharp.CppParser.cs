@@ -2702,9 +2702,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.DependentNameType.__Internal*)__Instance)->identifier = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.DependentNameType.__Internal*)__Instance)->identifier), value);
                     }
                 }
             }
@@ -3684,9 +3682,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.LayoutField.__Internal*)__Instance)->name = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.LayoutField.__Internal*)__Instance)->name), value);
                     }
                 }
 
@@ -4576,9 +4572,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.Declaration.__Internal*)__Instance)->name = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Declaration.__Internal*)__Instance)->name), value);
                     }
                 }
 
@@ -4594,9 +4588,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.Declaration.__Internal*)__Instance)->USR = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Declaration.__Internal*)__Instance)->USR), value);
                     }
                 }
 
@@ -4612,9 +4604,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.Declaration.__Internal*)__Instance)->debugText = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Declaration.__Internal*)__Instance)->debugText), value);
                     }
                 }
 
@@ -6167,13 +6157,12 @@ namespace CppSharp
                     __Instance = Marshal.AllocHGlobal(sizeof(global::CppSharp.Parser.AST.Statement.__Internal));
                     __ownsNativeInstance = true;
                     NativeToManagedMap[__Instance] = this;
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(str, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, str);
                     var __arg0 = __basicString0.__Instance;
                     var __arg2 = ReferenceEquals(decl, null) ? global::System.IntPtr.Zero : decl.__Instance;
                     __Internal.ctor((__Instance + __PointerAdjustment), __arg0, Class, __arg2);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                 }
 
                 public Statement(global::CppSharp.Parser.AST.Statement _0)
@@ -6248,9 +6237,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.Statement.__Internal*)__Instance)->@string = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Statement.__Internal*)__Instance)->@string), value);
                     }
                 }
             }
@@ -6324,13 +6311,12 @@ namespace CppSharp
                     __Instance = Marshal.AllocHGlobal(sizeof(global::CppSharp.Parser.AST.Expression.__Internal));
                     __ownsNativeInstance = true;
                     NativeToManagedMap[__Instance] = this;
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(str, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, str);
                     var __arg0 = __basicString0.__Instance;
                     var __arg2 = ReferenceEquals(decl, null) ? global::System.IntPtr.Zero : decl.__Instance;
                     __Internal.ctor((__Instance + __PointerAdjustment), __arg0, Class, __arg2);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                 }
 
                 public Expression(global::CppSharp.Parser.AST.Expression _0)
@@ -6437,19 +6423,17 @@ namespace CppSharp
                     __Instance = Marshal.AllocHGlobal(sizeof(global::CppSharp.Parser.AST.BinaryOperator.__Internal));
                     __ownsNativeInstance = true;
                     NativeToManagedMap[__Instance] = this;
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(str, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, str);
                     var __arg0 = __basicString0.__Instance;
                     var __arg1 = ReferenceEquals(lhs, null) ? global::System.IntPtr.Zero : lhs.__Instance;
                     var __arg2 = ReferenceEquals(rhs, null) ? global::System.IntPtr.Zero : rhs.__Instance;
-                    var __allocator3 = new global::Std.Allocator<sbyte>();
-                    var __basicString3 = global::Std.BasicStringExtensions.BasicString(opcodeStr, __allocator3);
+                    var __basicString3 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString3, opcodeStr);
                     var __arg3 = __basicString3.__Instance;
                     __Internal.ctor((__Instance + __PointerAdjustment), __arg0, __arg1, __arg2, __arg3);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                     __basicString3.Dispose(false);
-                    __allocator3.Dispose();
                 }
 
                 public BinaryOperator(global::CppSharp.Parser.AST.BinaryOperator _0)
@@ -6525,9 +6509,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.BinaryOperator.__Internal*)__Instance)->opcodeStr = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.BinaryOperator.__Internal*)__Instance)->opcodeStr), value);
                     }
                 }
             }
@@ -6624,13 +6606,12 @@ namespace CppSharp
                     __Instance = Marshal.AllocHGlobal(sizeof(global::CppSharp.Parser.AST.CallExpr.__Internal));
                     __ownsNativeInstance = true;
                     NativeToManagedMap[__Instance] = this;
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(str, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, str);
                     var __arg0 = __basicString0.__Instance;
                     var __arg1 = ReferenceEquals(decl, null) ? global::System.IntPtr.Zero : decl.__Instance;
                     __Internal.ctor((__Instance + __PointerAdjustment), __arg0, __arg1);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                 }
 
                 public CallExpr(global::CppSharp.Parser.AST.CallExpr _0)
@@ -6784,13 +6765,12 @@ namespace CppSharp
                     __Instance = Marshal.AllocHGlobal(sizeof(global::CppSharp.Parser.AST.CXXConstructExpr.__Internal));
                     __ownsNativeInstance = true;
                     NativeToManagedMap[__Instance] = this;
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(str, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, str);
                     var __arg0 = __basicString0.__Instance;
                     var __arg1 = ReferenceEquals(decl, null) ? global::System.IntPtr.Zero : decl.__Instance;
                     __Internal.ctor((__Instance + __PointerAdjustment), __arg0, __arg1);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                 }
 
                 public CXXConstructExpr(global::CppSharp.Parser.AST.CXXConstructExpr _0)
@@ -7523,9 +7503,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.Function.__Internal*)__Instance)->mangled = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Function.__Internal*)__Instance)->mangled), value);
                     }
                 }
 
@@ -7541,9 +7519,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.Function.__Internal*)__Instance)->signature = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Function.__Internal*)__Instance)->signature), value);
                     }
                 }
 
@@ -7559,9 +7535,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.Function.__Internal*)__Instance)->body = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Function.__Internal*)__Instance)->body), value);
                     }
                 }
 
@@ -8417,9 +8391,7 @@ namespace CppSharp
 
                         set
                         {
-                            var __allocator0 = new global::Std.Allocator<sbyte>();
-                            var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                            ((global::CppSharp.Parser.AST.Enumeration.Item.__Internal*)__Instance)->expression = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                            global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Enumeration.Item.__Internal*)__Instance)->expression), value);
                         }
                     }
 
@@ -8530,12 +8502,11 @@ namespace CppSharp
 
                 public global::CppSharp.Parser.AST.Enumeration.Item FindItemByName(string Name)
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(Name, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, Name);
                     var __arg0 = __basicString0.__Instance;
                     var __ret = __Internal.FindItemByName((__Instance + __PointerAdjustment), __arg0);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                     global::CppSharp.Parser.AST.Enumeration.Item __result0;
                     if (__ret == IntPtr.Zero) __result0 = null;
                     else if (global::CppSharp.Parser.AST.Enumeration.Item.NativeToManagedMap.ContainsKey(__ret))
@@ -8769,9 +8740,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.Variable.__Internal*)__Instance)->mangled = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.Variable.__Internal*)__Instance)->mangled), value);
                     }
                 }
 
@@ -11319,12 +11288,11 @@ namespace CppSharp
 
                 public global::CppSharp.Parser.AST.ClassTemplateSpecialization FindSpecialization(string usr)
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(usr, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, usr);
                     var __arg0 = __basicString0.__Instance;
                     var __ret = __Internal.FindSpecialization((__Instance + __PointerAdjustment), __arg0);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                     global::CppSharp.Parser.AST.ClassTemplateSpecialization __result0;
                     if (__ret == IntPtr.Zero) __result0 = null;
                     else if (global::CppSharp.Parser.AST.ClassTemplateSpecialization.NativeToManagedMap.ContainsKey(__ret))
@@ -11335,12 +11303,11 @@ namespace CppSharp
 
                 public global::CppSharp.Parser.AST.ClassTemplatePartialSpecialization FindPartialSpecialization(string usr)
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(usr, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, usr);
                     var __arg0 = __basicString0.__Instance;
                     var __ret = __Internal.FindPartialSpecialization((__Instance + __PointerAdjustment), __arg0);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                     global::CppSharp.Parser.AST.ClassTemplatePartialSpecialization __result0;
                     if (__ret == IntPtr.Zero) __result0 = null;
                     else if (global::CppSharp.Parser.AST.ClassTemplatePartialSpecialization.NativeToManagedMap.ContainsKey(__ret))
@@ -12119,12 +12086,11 @@ namespace CppSharp
 
                 public global::CppSharp.Parser.AST.FunctionTemplateSpecialization FindSpecialization(string usr)
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(usr, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, usr);
                     var __arg0 = __basicString0.__Instance;
                     var __ret = __Internal.FindSpecialization((__Instance + __PointerAdjustment), __arg0);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                     global::CppSharp.Parser.AST.FunctionTemplateSpecialization __result0;
                     if (__ret == IntPtr.Zero) __result0 = null;
                     else if (global::CppSharp.Parser.AST.FunctionTemplateSpecialization.NativeToManagedMap.ContainsKey(__ret))
@@ -12564,12 +12530,11 @@ namespace CppSharp
 
                 public global::CppSharp.Parser.AST.VarTemplateSpecialization FindSpecialization(string usr)
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(usr, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, usr);
                     var __arg0 = __basicString0.__Instance;
                     var __ret = __Internal.FindSpecialization((__Instance + __PointerAdjustment), __arg0);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                     global::CppSharp.Parser.AST.VarTemplateSpecialization __result0;
                     if (__ret == IntPtr.Zero) __result0 = null;
                     else if (global::CppSharp.Parser.AST.VarTemplateSpecialization.NativeToManagedMap.ContainsKey(__ret))
@@ -12580,12 +12545,11 @@ namespace CppSharp
 
                 public global::CppSharp.Parser.AST.VarTemplatePartialSpecialization FindPartialSpecialization(string usr)
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(usr, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, usr);
                     var __arg0 = __basicString0.__Instance;
                     var __ret = __Internal.FindPartialSpecialization((__Instance + __PointerAdjustment), __arg0);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                     global::CppSharp.Parser.AST.VarTemplatePartialSpecialization __result0;
                     if (__ret == IntPtr.Zero) __result0 = null;
                     else if (global::CppSharp.Parser.AST.VarTemplatePartialSpecialization.NativeToManagedMap.ContainsKey(__ret))
@@ -13467,9 +13431,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.MacroDefinition.__Internal*)__Instance)->name = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.MacroDefinition.__Internal*)__Instance)->name), value);
                     }
                 }
 
@@ -13485,9 +13447,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.MacroDefinition.__Internal*)__Instance)->expression = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.MacroDefinition.__Internal*)__Instance)->expression), value);
                     }
                 }
 
@@ -13636,9 +13596,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.MacroExpansion.__Internal*)__Instance)->name = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.MacroExpansion.__Internal*)__Instance)->name), value);
                     }
                 }
 
@@ -13654,9 +13612,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.MacroExpansion.__Internal*)__Instance)->text = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.MacroExpansion.__Internal*)__Instance)->text), value);
                     }
                 }
 
@@ -13928,9 +13884,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.TranslationUnit.__Internal*)__Instance)->fileName = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.TranslationUnit.__Internal*)__Instance)->fileName), value);
                     }
                 }
 
@@ -14150,9 +14104,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.NativeLibrary.__Internal*)__Instance)->fileName = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.NativeLibrary.__Internal*)__Instance)->fileName), value);
                     }
                 }
 
@@ -14315,12 +14267,11 @@ namespace CppSharp
 
                 public global::CppSharp.Parser.AST.TranslationUnit FindOrCreateModule(string File)
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(File, __allocator0);
+                    var __basicString0 = new global::Std.BasicString<sbyte, global::Std.CharTraits<sbyte>, global::Std.Allocator<sbyte>>();
+                    global::Std.BasicStringExtensions.Assign(__basicString0, File);
                     var __arg0 = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
                     var __ret = __Internal.FindOrCreateModule((__Instance + __PointerAdjustment), __arg0);
                     __basicString0.Dispose(false);
-                    __allocator0.Dispose();
                     global::CppSharp.Parser.AST.TranslationUnit __result0;
                     if (__ret == IntPtr.Zero) __result0 = null;
                     else if (global::CppSharp.Parser.AST.TranslationUnit.NativeToManagedMap.ContainsKey(__ret))
@@ -15150,9 +15101,7 @@ namespace CppSharp
 
                         set
                         {
-                            var __allocator0 = new global::Std.Allocator<sbyte>();
-                            var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                            ((global::CppSharp.Parser.AST.BlockCommandComment.Argument.__Internal*)__Instance)->text = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                            global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.BlockCommandComment.Argument.__Internal*)__Instance)->text), value);
                         }
                     }
                 }
@@ -15698,9 +15647,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.VerbatimBlockLineComment.__Internal*)__Instance)->text = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.VerbatimBlockLineComment.__Internal*)__Instance)->text), value);
                     }
                 }
             }
@@ -15977,9 +15924,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.VerbatimLineComment.__Internal*)__Instance)->text = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.VerbatimLineComment.__Internal*)__Instance)->text), value);
                     }
                 }
             }
@@ -16160,9 +16105,7 @@ namespace CppSharp
 
                         set
                         {
-                            var __allocator0 = new global::Std.Allocator<sbyte>();
-                            var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                            ((global::CppSharp.Parser.AST.InlineCommandComment.Argument.__Internal*)__Instance)->text = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                            global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.InlineCommandComment.Argument.__Internal*)__Instance)->text), value);
                         }
                     }
                 }
@@ -16551,9 +16494,7 @@ namespace CppSharp
 
                         set
                         {
-                            var __allocator0 = new global::Std.Allocator<sbyte>();
-                            var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                            ((global::CppSharp.Parser.AST.HTMLStartTagComment.Attribute.__Internal*)__Instance)->name = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                            global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.HTMLStartTagComment.Attribute.__Internal*)__Instance)->name), value);
                         }
                     }
 
@@ -16569,9 +16510,7 @@ namespace CppSharp
 
                         set
                         {
-                            var __allocator0 = new global::Std.Allocator<sbyte>();
-                            var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                            ((global::CppSharp.Parser.AST.HTMLStartTagComment.Attribute.__Internal*)__Instance)->value = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                            global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.HTMLStartTagComment.Attribute.__Internal*)__Instance)->value), value);
                         }
                     }
                 }
@@ -16675,9 +16614,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.HTMLStartTagComment.__Internal*)__Instance)->tagName = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.HTMLStartTagComment.__Internal*)__Instance)->tagName), value);
                     }
                 }
 
@@ -16800,9 +16737,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.HTMLEndTagComment.__Internal*)__Instance)->tagName = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.HTMLEndTagComment.__Internal*)__Instance)->tagName), value);
                     }
                 }
             }
@@ -16916,9 +16851,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.TextComment.__Internal*)__Instance)->text = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.TextComment.__Internal*)__Instance)->text), value);
                     }
                 }
             }
@@ -17057,9 +16990,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.RawComment.__Internal*)__Instance)->text = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.RawComment.__Internal*)__Instance)->text), value);
                     }
                 }
 
@@ -17075,9 +17006,7 @@ namespace CppSharp
 
                     set
                     {
-                        var __allocator0 = new global::Std.Allocator<sbyte>();
-                        var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                        ((global::CppSharp.Parser.AST.RawComment.__Internal*)__Instance)->briefText = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                        global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.AST.RawComment.__Internal*)__Instance)->briefText), value);
                     }
                 }
 
@@ -17447,9 +17376,7 @@ namespace CppSharp
 
                 set
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                    ((global::CppSharp.Parser.ParserTargetInfo.__Internal*)__Instance)->ABI = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                    global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.ParserTargetInfo.__Internal*)__Instance)->ABI), value);
                 }
             }
 
@@ -18114,6 +18041,9 @@ namespace CppSharp
                 [FieldOffset(148)]
                 internal byte unityBuild;
 
+                [FieldOffset(149)]
+                internal byte skipPrivateDeclarations;
+
                 [SuppressUnmanagedCodeSecurity]
                 [DllImport("CppSharp.CppParser", CallingConvention = global::System.Runtime.InteropServices.CallingConvention.Cdecl,
                     EntryPoint="_ZN8CppSharp9CppParser16CppParserOptionsC2Ev")]
@@ -18506,9 +18436,7 @@ namespace CppSharp
 
                 set
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                    ((global::CppSharp.Parser.CppParserOptions.__Internal*)__Instance)->libraryFile = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                    global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.CppParserOptions.__Internal*)__Instance)->libraryFile), value);
                 }
             }
 
@@ -18555,9 +18483,7 @@ namespace CppSharp
 
                 set
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                    ((global::CppSharp.Parser.CppParserOptions.__Internal*)__Instance)->targetTriple = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                    global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.CppParserOptions.__Internal*)__Instance)->targetTriple), value);
                 }
             }
 
@@ -18573,9 +18499,7 @@ namespace CppSharp
 
                 set
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                    ((global::CppSharp.Parser.CppParserOptions.__Internal*)__Instance)->currentDir = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                    global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.CppParserOptions.__Internal*)__Instance)->currentDir), value);
                 }
             }
 
@@ -18654,6 +18578,19 @@ namespace CppSharp
                 set
                 {
                     ((global::CppSharp.Parser.CppParserOptions.__Internal*)__Instance)->unityBuild = (byte) (value ? 1 : 0);
+                }
+            }
+
+            public bool SkipPrivateDeclarations
+            {
+                get
+                {
+                    return ((global::CppSharp.Parser.CppParserOptions.__Internal*) __Instance)->skipPrivateDeclarations != 0;
+                }
+
+                set
+                {
+                    ((global::CppSharp.Parser.CppParserOptions.__Internal*)__Instance)->skipPrivateDeclarations = (byte) (value ? 1 : 0);
                 }
             }
 
@@ -18854,9 +18791,7 @@ namespace CppSharp
 
                 set
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                    ((global::CppSharp.Parser.ParserDiagnostic.__Internal*)__Instance)->fileName = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                    global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.ParserDiagnostic.__Internal*)__Instance)->fileName), value);
                 }
             }
 
@@ -18872,9 +18807,7 @@ namespace CppSharp
 
                 set
                 {
-                    var __allocator0 = new global::Std.Allocator<sbyte>();
-                    var __basicString0 = global::Std.BasicStringExtensions.BasicString(value, __allocator0);
-                    ((global::CppSharp.Parser.ParserDiagnostic.__Internal*)__Instance)->message = *(global::Std.BasicString.__Internalc__N_std_N___1_S_basic_string__C___N_std_N___1_S_char_traits__C___N_std_N___1_S_allocator__C*) __basicString0.__Instance;
+                    global::Std.BasicStringExtensions.__Internal.Assign(new global::System.IntPtr(&((global::CppSharp.Parser.ParserDiagnostic.__Internal*)__Instance)->message), value);
                 }
             }
 

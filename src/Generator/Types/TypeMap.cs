@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using CppSharp.AST;
-using CppSharp.AST.Extensions;
 using CppSharp.Generators;
 using CppSharp.Generators.AST;
 using CppSharp.Generators.CLI;
@@ -14,7 +12,7 @@ namespace CppSharp.Types
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
     public class TypeMapAttribute : Attribute
     {
-        public string Type { get; private set; }
+        public string Type { get; }
         public GeneratorKind GeneratorKind { get; set; }
         
         public TypeMapAttribute(string type) : this(type, 0)
@@ -37,26 +35,19 @@ namespace CppSharp.Types
     public class TypeMap
     {
         public Type Type { get; set; }
-        public Declaration Declaration { get; set; }
-        public ASTContext ASTContext { get; set; }
+        public BindingContext Context { get; set; }
         public ITypeMapDatabase TypeMapDatabase { get; set; }
 
         public bool IsEnabled { get; set; } = true;
 
-        public virtual bool IsIgnored
-        {
-            get { return false; }
-        }
+        public virtual bool IsIgnored => false;
 
-        public virtual bool IsValueType
-        {
-            get { return false; }
-        }
+        public virtual bool IsValueType => false;
 
         /// <summary>
         /// Determines if the type map performs marshalling or only injects custom code.
         /// </summary>
-        public virtual bool DoesMarshalling { get { return true; } }
+        public virtual bool DoesMarshalling => true;
 
         #region C# backend
 
@@ -67,12 +58,12 @@ namespace CppSharp.Types
 
         public virtual void CSharpMarshalToNative(CSharpMarshalContext ctx)
         {
-            throw new NotImplementedException();
+            ctx.Return.Write(ctx.Parameter.Name);
         }
 
         public virtual void CSharpMarshalToManaged(CSharpMarshalContext ctx)
         {
-            throw new NotImplementedException();
+            ctx.Return.Write(ctx.ReturnVarName);
         }
 
         /// <summary>
@@ -99,12 +90,12 @@ namespace CppSharp.Types
 
         public virtual void CLIMarshalToNative(MarshalContext ctx)
         {
-            throw new NotImplementedException();
+            ctx.Return.Write(ctx.Parameter.Name);
         }
 
         public virtual void CLIMarshalToManaged(MarshalContext ctx)
         {
-            throw new NotImplementedException();
+            ctx.Return.Write(ctx.ReturnVarName);
         }
 
         #endregion
@@ -112,10 +103,7 @@ namespace CppSharp.Types
 
     public interface ITypeMapDatabase
     {
-        bool FindTypeMapRecursive(Type type, out TypeMap typeMap);
         bool FindTypeMap(Type decl, out TypeMap typeMap);
-        bool FindTypeMap(Declaration decl, out TypeMap typeMap);
+        bool FindTypeMap(Declaration declaration, out TypeMap typeMap);
     }
-
-
 }

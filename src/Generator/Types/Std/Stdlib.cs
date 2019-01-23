@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using CppSharp.AST;
 using CppSharp.AST.Extensions;
 using CppSharp.Generators;
@@ -13,6 +14,232 @@ namespace CppSharp.Types.Std
     public class VaList : TypeMap
     {
         public override bool IsIgnored => true;
+    }
+
+    [TypeMap("int", GeneratorKind = GeneratorKind.CSharp)]
+    public class Int : TypeMap
+    {
+        public override Type CSharpSignatureType(TypePrinterContext ctx) =>
+            CSharpTypePrinter.GetSignedType(Context.TargetInfo.IntWidth);
+    }
+
+    [TypeMap("unsigned int", GeneratorKind = GeneratorKind.CSharp)]
+    public class UnsignedInt : TypeMap
+    {
+        public override Type CSharpSignatureType(TypePrinterContext ctx) =>
+            CSharpTypePrinter.GetUnsignedType(Context.TargetInfo.IntWidth);
+    }
+
+    [TypeMap("long", GeneratorKind = GeneratorKind.CSharp)]
+    public class Long : TypeMap
+    {
+        public override Type CSharpSignatureType(TypePrinterContext ctx) =>
+            CSharpTypePrinter.GetSignedType(Context.TargetInfo.LongWidth);
+    }
+
+    [TypeMap("unsigned long", GeneratorKind = GeneratorKind.CSharp)]
+    public class UnsignedLong : TypeMap
+    {
+        public override Type CSharpSignatureType(TypePrinterContext ctx) =>
+            CSharpTypePrinter.GetUnsignedType(Context.TargetInfo.LongWidth);
+    }
+
+    [TypeMap("char", GeneratorKind = GeneratorKind.CSharp)]
+    public class Char : TypeMap
+    {
+        public override Type CSharpSignatureType(TypePrinterContext ctx)
+        {
+            return new CILType(ctx.Kind == TypePrinterContextKind.Native ||
+                !Context.Options.MarshalCharAsManagedChar ? typeof(sbyte) : typeof(char));
+        }
+
+        public override void CSharpMarshalToNative(CSharpMarshalContext ctx)
+        {
+            if (Context.Options.MarshalCharAsManagedChar)
+                ctx.Return.Write("global::System.Convert.ToSByte({0})",
+               ctx.Parameter.Name);
+            else
+                ctx.Return.Write(ctx.Parameter.Name);
+        }
+
+        public override void CSharpMarshalToManaged(CSharpMarshalContext ctx)
+        {
+            if (Context.Options.MarshalCharAsManagedChar)
+                ctx.Return.Write("global::System.Convert.ToChar({0})",
+                                   ctx.ReturnVarName);
+            else
+                ctx.Return.Write(ctx.ReturnVarName);
+        }
+    }
+
+    [TypeMap("char16_t", GeneratorKind = GeneratorKind.CSharp)]
+    public class Char16T : TypeMap
+    {
+        public override Type CSharpSignatureType(TypePrinterContext ctx)
+        {
+            return new CILType(typeof(char));
+        }
+    }
+
+    [TypeMap("wchar_t", GeneratorKind = GeneratorKind.CSharp)]
+    public class WCharT : TypeMap
+    {
+        public override Type CSharpSignatureType(TypePrinterContext ctx)
+        {
+            return new CILType(typeof(char));
+        }
+    }
+
+    [TypeMap("const char*")]
+    public class ConstCharPointer : TypeMap
+    {
+        public override Type CLISignatureType(TypePrinterContext ctx)
+        {
+            return new CILType(typeof(string));
+        }
+
+        public override void CLIMarshalToNative(MarshalContext ctx)
+        {
+            ctx.Before.WriteLine(
+                "auto _{0} = clix::marshalString<clix::E_UTF8>({1});",
+                ctx.ArgName, ctx.Parameter.Name);
+
+            ctx.Return.Write("_{0}.c_str()", ctx.ArgName);
+        }
+
+        public override void CLIMarshalToManaged(MarshalContext ctx)
+        {
+            if (ctx.Parameter != null && !ctx.Parameter.IsOut &&
+                !ctx.Parameter.IsInOut)
+            {
+                ctx.Return.Write(ctx.Parameter.Name);
+                return;
+            }
+
+            Type type = ctx.ReturnType.Type.Desugar();
+            Type pointee = type.GetPointee().Desugar();
+            var isChar = type.IsPointerToPrimitiveType(PrimitiveType.Char) ||
+                (pointee.IsPointerToPrimitiveType(PrimitiveType.Char) &&
+                 ctx.Parameter != null &&
+                 (ctx.Parameter.IsInOut || ctx.Parameter.IsOut));
+            var encoding = isChar ? Encoding.ASCII : Encoding.Unicode;
+
+            if (Equals(encoding, Encoding.ASCII))
+                encoding = Context.Options.Encoding;
+
+            string param;
+            if (Equals(encoding, Encoding.ASCII))
+                param = "E_UTF8";
+            else if (Equals(encoding, Encoding.Unicode) ||
+                     Equals(encoding, Encoding.BigEndianUnicode))
+                param = "E_UTF16";
+            else
+                throw new System.NotSupportedException(
+                    $"{Context.Options.Encoding.EncodingName} is not supported yet.");
+
+            ctx.Return.Write(
+                $@"({ctx.ReturnVarName} == 0 ? nullptr : clix::marshalString<clix::{
+                    param}>({ctx.ReturnVarName}))");
+        }
+
+        public override Type CSharpSignatureType(TypePrinterContext ctx)
+        {
+            if (ctx.Kind == TypePrinterContextKind.Managed)
+                return new CILType(typeof(string));
+
+            if (ctx.Parameter == null || ctx.Parameter.Name == Helpers.ReturnIdentifier)
+                return new CustomType(CSharpTypePrinter.IntPtrType);
+            if (Context.Options.Encoding == Encoding.ASCII)
+                return new CustomType("[MarshalAs(UnmanagedType.LPStr)] string");
+            if (Context.Options.Encoding == Encoding.Unicode ||
+                Context.Options.Encoding == Encoding.BigEndianUnicode)
+                return new CustomType("[MarshalAs(UnmanagedType.LPWStr)] string");
+            throw new System.NotSupportedException(
+                $"{Context.Options.Encoding.EncodingName} is not supported yet.");
+        }
+
+        public override void CSharpMarshalToNative(CSharpMarshalContext ctx)
+        {
+            if (ctx.Parameter.Usage == ParameterUsage.Unknown &&
+                ctx.MarshalKind != MarshalKind.NativeField &&
+                ctx.MarshalKind != MarshalKind.VTableReturnValue &&
+                ctx.MarshalKind != MarshalKind.Variable)
+            {
+                ctx.Return.Write(ctx.Parameter.Name);
+                return;
+            }
+            if (Equals(Context.Options.Encoding, Encoding.ASCII))
+            {
+                ctx.Return.Write($"Marshal.StringToHGlobalAnsi({ctx.Parameter.Name})");
+                return;
+            }
+            if (Equals(Context.Options.Encoding, Encoding.Unicode) ||
+                Equals(Context.Options.Encoding, Encoding.BigEndianUnicode))
+            {
+                ctx.Return.Write($"Marshal.StringToHGlobalUni({ctx.Parameter.Name})");
+                return;
+            }
+            throw new System.NotSupportedException(
+                $"{Context.Options.Encoding.EncodingName} is not supported yet.");
+        }
+
+        public override void CSharpMarshalToManaged(CSharpMarshalContext ctx)
+        {
+            if (ctx.Parameter != null && !ctx.Parameter.IsOut &&
+                !ctx.Parameter.IsInOut)
+            {
+                ctx.Return.Write(ctx.Parameter.Name);
+                return;
+            }
+
+            Type type = ctx.ReturnType.Type.Desugar();
+            Type pointee = type.GetPointee().Desugar();
+            var isChar = type.IsPointerToPrimitiveType(PrimitiveType.Char) ||
+                (pointee.IsPointerToPrimitiveType(PrimitiveType.Char) &&
+                 ctx.Parameter != null &&
+                 (ctx.Parameter.IsInOut || ctx.Parameter.IsOut));
+            var encoding = isChar ? Encoding.ASCII : Encoding.Unicode;
+
+            if (Equals(encoding, Encoding.ASCII))
+                encoding = Context.Options.Encoding;
+
+            if (Equals(encoding, Encoding.ASCII))
+            {
+                ctx.Return.Write($"Marshal.PtrToStringAnsi({ctx.ReturnVarName})");
+                return;
+            }
+            if (Equals(encoding, Encoding.UTF8))
+            {
+                ctx.Return.Write($"Marshal.PtrToStringUTF8({ctx.ReturnVarName})");
+                return;
+            }
+
+            // If we reach this, we know the string is Unicode.
+            if (isChar || ctx.Context.TargetInfo.WCharWidth == 16)
+            {
+                ctx.Return.Write($"Marshal.PtrToStringUni({ctx.ReturnVarName})");
+                return;
+            }
+            // If we reach this, we should have an UTF-32 wide string.
+            const string encodingName = "System.Text.Encoding.UTF32";
+            ctx.Return.Write($@"CppSharp.Runtime.Helpers.MarshalEncodedString({
+                ctx.ReturnVarName}, {encodingName})");
+        }
+    }
+
+    [TypeMap("const char[]")]
+    public class ConstCharArray : ConstCharPointer
+    {
+    }
+
+    [TypeMap("const wchar_t*")]
+    public class ConstWCharTPointer : ConstCharPointer
+    {
+    }
+
+    [TypeMap("const char16_t*")]
+    public class ConstChar16TPointer : ConstCharPointer
+    {
     }
 
     [TypeMap("basic_string<char, char_traits<char>, allocator<char>>")]
@@ -47,34 +274,32 @@ namespace CppSharp.Types.Std
 
         public override void CSharpMarshalToNative(CSharpMarshalContext ctx)
         {
-            var type = ctx.Parameter.Type.Desugar();
+            Type type = ctx.Parameter.Type.Desugar();
             ClassTemplateSpecialization basicString = GetBasicString(type);
             var typePrinter = new CSharpTypePrinter(ctx.Context);
-            if (!ctx.Parameter.Type.Desugar().IsAddress())
+            if (!ctx.Parameter.Type.Desugar().IsAddress() &&
+                ctx.MarshalKind != MarshalKind.NativeField)
                 ctx.Return.Write($"*({typePrinter.PrintNative(basicString)}*) ");
-            var allocator = ctx.Context.ASTContext.FindClass("allocator", false, true).First(
-                a => a.IsDependent && a.TranslationUnit.IsSystemHeader);
-            var allocatorChar = allocator.Specializations.First(s => !s.Ignore);
             string qualifiedBasicString = GetQualifiedBasicString(basicString);
-            if (type.IsPointer() || (type.IsReference() && ctx.Declaration is Field))
+            var assign = basicString.Methods.First(m => m.OriginalName == "assign");
+            if (ctx.MarshalKind == MarshalKind.NativeField)
             {
-                ctx.Return.Write($@"{qualifiedBasicString}Extensions.{basicString.Name}({
-                    ctx.Parameter.Name}, new {allocatorChar.Visit(typePrinter)}()).{
-                    Helpers.InstanceIdentifier}");
+                ctx.Return.Write($@"{qualifiedBasicString}Extensions.{
+                    Helpers.InternalStruct}.{assign.Name}(new {
+                    CSharpTypePrinter.IntPtrType}(&{
+                    ctx.ReturnVarName}), {ctx.Parameter.Name})");
+                ctx.ReturnVarName = string.Empty;
             }
             else
             {
-                var varAllocator = $"__allocator{ctx.ParameterIndex}";
                 var varBasicString = $"__basicString{ctx.ParameterIndex}";
-                ctx.Before.WriteLine($@"var {varAllocator} = new {
-                    allocatorChar.Visit(typePrinter)}();");
-                ctx.Before.WriteLine($@"var {varBasicString} = {
-                    qualifiedBasicString}Extensions.{basicString.Name}({ctx.Parameter.Name}, {
-                    varAllocator});");
+                ctx.Before.WriteLine($@"var {varBasicString} = new {
+                    basicString.Visit(typePrinter)}();");
+                ctx.Before.WriteLine($@"{qualifiedBasicString}Extensions.{
+                    assign.Name}({varBasicString}, {ctx.Parameter.Name});");
                 ctx.Return.Write($"{varBasicString}.{Helpers.InstanceIdentifier}");
-                ctx.Cleanup.WriteLine($@"{varBasicString}.Dispose({
-                    (type.IsPointer() ? "true" : "false")});");
-                ctx.Cleanup.WriteLine($"{varAllocator}.Dispose();");
+                if (!type.IsPointer())
+                    ctx.Cleanup.WriteLine($"{varBasicString}.Dispose(false);");
             }
         }
 
@@ -410,16 +635,6 @@ namespace CppSharp.Types.Std
         public override Type CSharpSignatureType(TypePrinterContext ctx)
         {
             return new CILType(typeof(System.IntPtr));
-        }
-
-        public override void CSharpMarshalToNative(CSharpMarshalContext ctx)
-        {
-            ctx.Return.Write(ctx.Parameter.Name);
-        }
-
-        public override void CSharpMarshalToManaged(CSharpMarshalContext ctx)
-        {
-            ctx.Return.Write(ctx.ReturnVarName);
         }
     }
 }

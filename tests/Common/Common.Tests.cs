@@ -24,6 +24,14 @@ public class CommonTests : GeneratorTestFixture
         {
             Bar bar = foo;
             Assert.IsTrue(Bar.Item.Item1 == bar);
+
+            using (var hasOverloadsWithDifferentPointerKindsToSameType =
+                new HasOverloadsWithDifferentPointerKindsToSameType())
+            {
+                hasOverloadsWithDifferentPointerKindsToSameType.Overload(foo, 0);
+                using (var foo2 = new Foo2())
+                    hasOverloadsWithDifferentPointerKindsToSameType.Overload(foo2, 0);
+            }
         }
         using (var overridesNonDirectVirtual = new OverridesNonDirectVirtual())
         {
@@ -48,6 +56,8 @@ public class CommonTests : GeneratorTestFixture
         itemsDifferByCase = ItemsDifferByCase.CaseA;
         itemsDifferByCase.GetHashCode();
         Common.SMallFollowedByCapital();
+        Common.IntegerOverload(0);
+        Common.IntegerOverload((uint) 0);
         using (new DerivedFromSecondaryBaseWithIgnoredVirtualMethod()) { }
 
 #pragma warning restore 0168
@@ -622,10 +632,13 @@ public class CommonTests : GeneratorTestFixture
         var bar = new Bar { A = 5, B = 5.5f };
         Assert.IsTrue(bar == bar);
         Assert.IsFalse(new Bar { A = 5, B = 5.6f } == bar);
+#if !__MonoCS__
         using (var differentConstOverloads = new DifferentConstOverloads())
         {
-            Assert.IsTrue(differentConstOverloads != null);
+            DifferentConstOverloads other = null;
+            Assert.IsTrue(differentConstOverloads != other);
         }
+#endif
 
 #pragma warning restore 1718
     }
@@ -644,7 +657,10 @@ public class CommonTests : GeneratorTestFixture
     {
         var differentConstOverloads = new DifferentConstOverloads();
         Assert.IsTrue(differentConstOverloads == new DifferentConstOverloads());
-        Assert.IsFalse(differentConstOverloads == 5);
+        Assert.IsTrue(differentConstOverloads == 5);
+        Assert.IsFalse(differentConstOverloads == 4);
+        Assert.IsTrue(differentConstOverloads == "abcde");
+        Assert.IsFalse(differentConstOverloads == "abcd");
     }
 
     [Test]
@@ -777,7 +793,28 @@ This is a very long string. This is a very long string. This is a very long stri
         }
     }
 
-    [Test, Platform(Exclude = "Win")]
+    [Ignore("https://github.com/mono/CppSharp/issues/867")] 
+    public void TestStdStringPassedByValue()
+    {
+        // when C++ memory is deleted, it's only marked as free but not immediadely freed
+        // this can hide memory bugs while marshalling
+        // so let's use a long string to increase the chance of a crash right away
+        const string t = @"This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. 
+This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string.
+This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string.
+This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string.
+This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string.
+This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string. This is a very long string.";
+        using (var hasStdString = new HasStdString())
+        {
+            Assert.That(hasStdString.TestStdStringPassedByValue(t), Is.EqualTo(t + "_test"));
+            hasStdString.S = t;
+            Assert.That(hasStdString.S, Is.EqualTo(t));
+            Assert.That(hasStdString.StdString, Is.EqualTo(t));
+            Assert.That(hasStdString.StdString, Is.EqualTo(t));
+        }
+    }
+
     public void TestNullStdString()
     {
         using (var hasStdString = new HasStdString())

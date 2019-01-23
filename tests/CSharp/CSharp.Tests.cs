@@ -736,7 +736,15 @@ public unsafe class CSharpTests : GeneratorTestFixture
     {
         using (var virtualTemplate = new VirtualTemplate<int>())
         {
-            Assert.That(virtualTemplate.Function, Is.EqualTo(5));
+            Assert.That(virtualTemplate.Function(), Is.EqualTo(5));
+            int i = 15;
+            Assert.That(*virtualTemplate.Function(ref i), Is.EqualTo(15));
+        }
+        using (var virtualTemplate = new VirtualTemplate<bool>())
+        {
+            Assert.That(virtualTemplate.Function(), Is.EqualTo(5));
+            bool b = true;
+            Assert.That(*virtualTemplate.Function(ref b), Is.EqualTo(true));
         }
     }
 
@@ -1217,11 +1225,29 @@ public unsafe class CSharpTests : GeneratorTestFixture
         }
     }
 
+    [Test]
+    public void TestVirtualIndirectCallInNative()
+    {
+        using (Inter i = new Inter())
+        {
+            using (InterfaceTester tester = new InterfaceTester())
+            {
+                tester.SetInterface(i);
+                Assert.That(tester.Get(10), Is.EqualTo(IntPtr.Zero));
+            }
+        }
+    }
+
+    public class Inter : SimpleInterface
+    {
+        public override int Size => s;
+        public override int Capacity => s;
+        public override IntPtr Get(int n) { return new IntPtr(0); }
+        private int s = 0;
+    }
+
     private class OverrideVirtualTemplate : VirtualTemplate<int>
     {
-        public override int Function
-        {
-            get { return 10; }
-        }
+        public override int Function() => 10;
     }
 }

@@ -193,6 +193,12 @@ namespace CppSharp
                 void set(bool);
             }
 
+            property bool SkipPrivateDeclarations
+            {
+                bool get();
+                void set(bool);
+            }
+
             property unsigned int ArgumentsCount
             {
                 unsigned int get();
@@ -281,7 +287,7 @@ namespace CppSharp
 
             void ClearSupportedStdTypes();
 
-            protected:
+        protected:
             bool __ownsNativeInstance;
         };
 
@@ -334,7 +340,7 @@ namespace CppSharp
                 void set(int);
             }
 
-            protected:
+        protected:
             bool __ownsNativeInstance;
         };
 
@@ -392,7 +398,7 @@ namespace CppSharp
 
             void ClearDiagnostics();
 
-            protected:
+        protected:
             bool __ownsNativeInstance;
         };
 
@@ -419,7 +425,7 @@ namespace CppSharp
 
             static CppSharp::Parser::ParserResult^ ParseLibrary(CppSharp::Parser::CppParserOptions^ Opts);
 
-            protected:
+        protected:
             bool __ownsNativeInstance;
         };
     }

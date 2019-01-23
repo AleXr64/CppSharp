@@ -377,9 +377,7 @@ namespace CppSharp.Generators.CSharp
 
             if (@class.IsDependent && !@class.IsGenerated)
                 return true;
-
-            var typeMaps = new List<System.Type>();
-            var keys = new List<string>();
+            
             // disable the type maps, if any, for this class because of copy ctors, operators and others
             this.DisableTypeMap(@class);
 
@@ -426,7 +424,7 @@ namespace CppSharp.Generators.CSharp
                     var dict = $@"global::System.Collections.Concurrent.ConcurrentDictionary<IntPtr, {
                         printedClass}>";
                     WriteLine("internal static readonly {0} NativeToManagedMap = new {0}();", dict);
-                    WriteLine("protected void*[] __OriginalVTables;");
+                    WriteLine("protected internal void*[] __OriginalVTables;");
                 }
                 PopBlock(NewLineKind.BeforeNextBlock);
             }
@@ -912,7 +910,8 @@ namespace CppSharp.Generators.CSharp
             ctx.PushMarshalKind(MarshalKind.NativeField);
 
             var marshal = new CSharpMarshalManagedToNativePrinter(ctx);
-            ctx.Declaration = field;
+            ctx.PushMarshalKind(MarshalKind.NativeField);
+            ctx.ReturnType = field.QualifiedType;
 
             param.Visit(marshal);
 
@@ -924,16 +923,17 @@ namespace CppSharp.Generators.CSharp
 
             if (marshal.Context.Return.StringBuilder.Length > 0)
             {
-                Write($"{ctx.ReturnVarName} = ");
+                if (ctx.ReturnVarName.Length > 0)
+                    Write($"{ctx.ReturnVarName} = ");
                 if (type.IsPointer())
                 {
                     Type pointee = type.GetFinalPointee();
-                    if (pointee.IsPrimitiveType() && !type.IsConstCharString())
+                    if (pointee.IsPrimitiveType())
                     {
                         Write($"({CSharpTypePrinter.IntPtrType}) ");
                         var templateSubstitution = pointee.Desugar(false) as TemplateParameterSubstitutionType;
                         if (templateSubstitution != null)
-                            Write($"(object) ");
+                            Write("(object) ");
                     }
                 }
                 WriteLine($"{marshal.Context.Return};");
@@ -1189,14 +1189,13 @@ namespace CppSharp.Generators.CSharp
                 // IntPtr ensures that non-copying object constructor is invoked.
                 Class typeClass;
                 if (field.Type.TryGetClass(out typeClass) && !typeClass.IsValueType &&
-                    !ASTUtils.IsMappedToPrimitive(Context.TypeMaps, field.Type, typeClass))
+                    !ASTUtils.IsMappedToPrimitive(Context.TypeMaps, field.Type))
                     returnVar = $"new {CSharpTypePrinter.IntPtrType}(&{returnVar})";
             }
 
             var ctx = new CSharpMarshalContext(Context, CurrentIndentation)
             {
                 ArgName = field.Name,
-                Declaration = field,
                 ReturnVarName = returnVar,
                 ReturnType = returnType
             };
@@ -1673,11 +1672,12 @@ namespace CppSharp.Generators.CSharp
                 {
                     ReturnType = param.QualifiedType,
                     ReturnVarName = param.Name,
-                    ParameterIndex = i
+                    ParameterIndex = i,
+                    Parameter = param
                 };
 
                 ctx.PushMarshalKind(MarshalKind.GenericDelegate);
-                var marshal = new CSharpMarshalNativeToManagedPrinter(ctx) { MarshalsParameter = true };
+                var marshal = new CSharpMarshalNativeToManagedPrinter(ctx);
                 param.Visit(marshal);
                 ctx.PopMarshalKind();
 
@@ -2071,7 +2071,7 @@ namespace CppSharp.Generators.CSharp
         private void GenerateDestructorCall(Method dtor)
         {
             var @class = (Class) dtor.Namespace;
-            GenerateVirtualFunctionCall(dtor, @class, true);
+            GenerateVirtualFunctionCall(dtor, true);
             if (@class.IsAbstract)
             {
                 UnindentAndWriteCloseBrace();
@@ -2272,7 +2272,10 @@ namespace CppSharp.Generators.CSharp
 
         public override void GenerateMethodSpecifier(Method method, Class @class)
         {
-            if (method.IsVirtual && !method.IsGeneratedOverride() && !method.IsOperator && !method.IsPure)
+            bool isTemplateMethod = method.Parameters.Any(
+                p => p.Kind == ParameterKind.Extension);
+            if (method.IsVirtual && !method.IsGeneratedOverride() &&
+                !method.IsOperator && !method.IsPure && !isTemplateMethod)
                 Write("virtual ");
 
             var isBuiltinOperator = method.IsOperator &&
@@ -2416,11 +2419,11 @@ namespace CppSharp.Generators.CSharp
                 }
                 else if (method.SynthKind == FunctionSynthKind.AbstractImplCall)
                 {
-                    GenerateVirtualFunctionCall(method, @class.BaseClass);
+                    GenerateVirtualFunctionCall(method);
                 }
                 else if (method.IsVirtual)
                 {
-                    GenerateVirtualFunctionCall(method, @class);
+                    GenerateVirtualFunctionCall(method);
                 }
                 else
                 {
@@ -2548,35 +2551,44 @@ namespace CppSharp.Generators.CSharp
                 WriteLine(parameters == null ?
                     "return base.{0};" : "base.{0} = value;", property.Name);
             else
-                GenerateFunctionCall(GetVirtualCallDelegate(method, @class),
+                GenerateFunctionCall(GetVirtualCallDelegate(method),
                     parameters ?? method.Parameters, method, returnType);
         }
 
-        private void GenerateVirtualFunctionCall(Method method, Class @class,
+        private void GenerateVirtualFunctionCall(Method method,
             bool forceVirtualCall = false)
         {
             if (!forceVirtualCall && method.IsGeneratedOverride() &&
                 !method.BaseMethod.IsPure)
                 GenerateManagedCall(method, true);
             else
-                GenerateFunctionCall(GetVirtualCallDelegate(method, @class),
+                GenerateFunctionCall(GetVirtualCallDelegate(method),
                     method.Parameters, method);
         }
 
-        private string GetVirtualCallDelegate(Method method, Class @class)
+        private string GetVirtualCallDelegate(Method method)
         {
             Function @virtual = method;
             if (method.OriginalFunction != null &&
                 !((Class) method.OriginalFunction.Namespace).IsInterface)
                 @virtual = method.OriginalFunction;
 
-            var i = VTables.GetVTableIndex(@virtual, @class);
+            var i = VTables.GetVTableIndex(@virtual);
             int vtableIndex = 0;
+            var @class = (Class) method.Namespace;
+            var thisParam = method.Parameters.Find(
+                p => p.Kind == ParameterKind.Extension);
+            if (thisParam != null)
+                @class = (Class) method.OriginalFunction.Namespace;
+
             if (Context.ParserOptions.IsMicrosoftAbi)
                 vtableIndex = @class.Layout.VFTables.IndexOf(@class.Layout.VFTables.Where(
                     v => v.Layout.Components.Any(c => c.Method == @virtual)).First());
-            WriteLine("var {0} = *(void**) ((IntPtr) __OriginalVTables[{1}] + {2} * {3});",
-                Helpers.SlotIdentifier, vtableIndex, i, Context.TargetInfo.PointerWidth / 8);
+
+            WriteLine($@"var {Helpers.SlotIdentifier} = *(void**) ((IntPtr) {
+                (thisParam != null ? $"{thisParam.Name}."
+                : string.Empty)}__OriginalVTables[{vtableIndex}] + {i} * {
+                Context.TargetInfo.PointerWidth / 8});");
             if (method.IsDestructor && @class.IsAbstract)
             {
                 WriteLine("if ({0} != null)", Helpers.SlotIdentifier);
@@ -2734,16 +2746,17 @@ namespace CppSharp.Generators.CSharp
                 var indirectRetType = originalFunction.Parameters.First(
                     parameter => parameter.Kind == ParameterKind.IndirectReturnType);
 
-                Class retClass;
-                indirectRetType.Type.Desugar().TryGetClass(out retClass);
+                Type type = indirectRetType.Type.Desugar();
 
                 TypeMap typeMap;
                 string construct = null;
-                if (Context.TypeMaps.FindTypeMap(retClass, out typeMap))
+                if (Context.TypeMaps.FindTypeMap(type, out typeMap))
                     construct = typeMap.CSharpConstruct();
 
                 if (construct == null)
                 {
+                    Class retClass;
+                    type.TryGetClass(out retClass);
                     var @class = retClass.OriginalClass ?? retClass;
                     WriteLine($@"var {Helpers.ReturnIdentifier} = new {
                         TypePrinter.PrintNative(@class)}();");
@@ -2752,10 +2765,10 @@ namespace CppSharp.Generators.CSharp
                 {
                     if (string.IsNullOrWhiteSpace(construct))
                     {
-		                var typePrinterContext = new TypePrinterContext
-		                {
-		                    Type = indirectRetType.Type.Desugar()
-		                };
+                        var typePrinterContext = new TypePrinterContext
+                        {
+                            Type = indirectRetType.Type.Desugar()
+                        };
 
                         WriteLine("{0} {1};", typeMap.CSharpSignatureType(typePrinterContext),
                             Helpers.ReturnIdentifier);
@@ -2816,15 +2829,6 @@ namespace CppSharp.Generators.CSharp
                 {
                     WriteLine("var __instancePtr = &{0}.{1};", operatorParam.Name, Helpers.InstanceField);
                 }
-            }
-
-            // special validation when constructing std::string as it cannot take null as a value
-            if (method != null && method.OriginalName == "basic_string" &&
-                method.TranslationUnit.IsSystemHeader)
-            {
-                WriteLine($"if (ReferenceEquals({method.Parameters[0].Name}, null))");
-                WriteLineIndent($@"throw new global::System.ArgumentNullException({
-                    method.Parameters[0].Name}, ""The underlying std::string cannot take null."");");
             }
 
             if (needsReturn && !originalFunction.HasIndirectReturnTypeParameter)

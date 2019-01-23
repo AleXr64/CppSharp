@@ -47,6 +47,7 @@ public:
     TestPacking8();
     ~TestPacking8();
 };
+#pragma pack()
 
 class DLL_API IgnoredType
 {
@@ -125,8 +126,8 @@ struct DLL_API Bar
     };
 
     Bar();
-    Bar(Foo foo);
     explicit Bar(const Foo* foo);
+    Bar(Foo foo);
     Item RetItem1() const;
     int A;
     float B;
@@ -611,7 +612,7 @@ class DLL_API HasOverridenSetter : public TestProperties
 {
 public:
     HasOverridenSetter();
-    void setVirtual(bool value);
+    void setVirtual(bool value) override;
 
     int virtualSetterReturnsBoolean() override;
     bool setVirtualSetterReturnsBoolean(int value) override;
@@ -856,6 +857,7 @@ public:
     HasStdString();
     ~HasStdString();
     std::string testStdString(const std::string& s);
+    std::string testStdStringPassedByValue(std::string s);
     std::string s;
     std::string& getStdString();
 };
@@ -899,12 +901,16 @@ class DLL_API DifferentConstOverloads
 {
 public:
     DifferentConstOverloads();
+    int getI() const;
     bool operator ==(const DifferentConstOverloads& other);
     bool operator !=(const DifferentConstOverloads& other);
     bool operator ==(int number) const;
+    bool operator ==(std::string s) const;
 private:
     int i;
 };
+
+DLL_API bool operator ==(const DifferentConstOverloads& d, const char* s);
 
 class TestNamingAnonymousTypesInUnion
 {
@@ -1307,6 +1313,10 @@ public:
     void overload(int& i);
     void overload(int&& i);
     void overload(const int& i);
+    void overload(const Foo& rx, int from = -1);
+    void overload(Foo& rx, int from = -1);
+    void overload(const Foo2& rx, int from = -1);
+    void overload(Foo2&& rx, int from = -1);
     void dispose();
 };
 
@@ -1466,3 +1476,7 @@ template<int N> using TypeAlias = InvokeGenSeq<DerivedTypeAlias<N>>;
 template<int N>
 struct DerivedTypeAlias : TypeAlias<N / 2> {};
 
+DLL_API void integerOverload(int i);
+DLL_API void integerOverload(unsigned int i);
+DLL_API void integerOverload(long i);
+DLL_API void integerOverload(unsigned long i);

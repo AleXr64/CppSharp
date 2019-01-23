@@ -108,11 +108,11 @@ Bar::Bar()
 {
 }
 
-Bar::Bar(Foo foo)
+Bar::Bar(const Foo* foo)
 {
 }
 
-Bar::Bar(const Foo* foo)
+Bar::Bar(Foo foo)
 {
 }
 
@@ -504,6 +504,11 @@ std::string HasStdString::testStdString(const std::string& s)
     return s + "_test";
 }
 
+std::string HasStdString::testStdStringPassedByValue(std::string s)
+{
+    return s + "_test";
+}
+
 std::string& HasStdString::getStdString()
 {
     return s;
@@ -647,6 +652,11 @@ DifferentConstOverloads::DifferentConstOverloads() : i(5)
 {
 }
 
+int DifferentConstOverloads::getI() const
+{
+    return i;
+}
+
 bool DifferentConstOverloads::operator ==(const DifferentConstOverloads& other)
 {
     return i == other.i;
@@ -659,7 +669,17 @@ bool DifferentConstOverloads::operator !=(const DifferentConstOverloads& other)
 
 bool DifferentConstOverloads::operator ==(int number) const
 {
-    return false;
+    return i == number;
+}
+
+bool DifferentConstOverloads::operator ==(std::string s) const
+{
+    return i == s.length();
+}
+
+bool operator ==(const DifferentConstOverloads& d, const char* s)
+{
+    return d.getI() == strlen(s);
 }
 
 int HasVirtualProperty::getProperty()
@@ -840,6 +860,22 @@ void HasOverloadsWithDifferentPointerKindsToSameType::overload(const int& i)
 {
 }
 
+void HasOverloadsWithDifferentPointerKindsToSameType::overload(const Foo& rx, int from)
+{
+}
+
+void HasOverloadsWithDifferentPointerKindsToSameType::overload(Foo& rx, int from)
+{
+}
+
+void HasOverloadsWithDifferentPointerKindsToSameType::overload(const Foo2& rx, int from)
+{
+}
+
+void HasOverloadsWithDifferentPointerKindsToSameType::overload(Foo2&& rx, int from)
+{
+}
+
 void HasOverloadsWithDifferentPointerKindsToSameType::dispose()
 {
 }
@@ -952,5 +988,21 @@ void DerivedFromSecondaryBaseWithIgnoredVirtualMethod::generated()
 }
 
 void DerivedFromSecondaryBaseWithIgnoredVirtualMethod::ignored(const IgnoredType& ignoredParam)
+{
+}
+
+void integerOverload(int i)
+{
+}
+
+void integerOverload(unsigned int i)
+{
+}
+
+void integerOverload(long i)
+{
+}
+
+void integerOverload(unsigned long i)
 {
 }

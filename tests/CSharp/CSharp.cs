@@ -156,7 +156,7 @@ namespace CppSharp.Tests
 
         public override Type CSharpSignatureType(TypePrinterContext ctx)
         {
-            return new TagType(flags ?? (flags = ASTContext.FindEnum("Flags").First()));
+            return new TagType(flags ?? (flags = Context.ASTContext.FindEnum("Flags").First()));
         }
 
         public override void CSharpMarshalToNative(CSharpMarshalContext ctx)
@@ -179,7 +179,7 @@ namespace CppSharp.Tests
         {
             get
             {
-                var type = (TemplateSpecializationType)Type;
+                var type = (TemplateSpecializationType) Type;
                 var pointeeType = type.Arguments[0].Type;
                 var checker = new TypeIgnoreChecker(TypeMapDatabase);
                 pointeeType.Visit(checker);
@@ -240,6 +240,25 @@ namespace CppSharp.Tests
         public override void CSharpMarshalToManaged(CSharpMarshalContext ctx)
         {
             ctx.Return.Write(ctx.ReturnVarName);
+        }
+    }
+
+    [TypeMap("QString")]
+    public class QString : TypeMap
+    {
+        public override Type CSharpSignatureType(TypePrinterContext ctx)
+        {
+            return new CILType(typeof(string));
+        }
+
+        public override void CSharpMarshalToNative(CSharpMarshalContext ctx)
+        {
+            ctx.Return.Write("\"test\"");
+        }
+
+        public override void CSharpMarshalToManaged(CSharpMarshalContext ctx)
+        {
+            ctx.Return.Write("\"test\"");
         }
     }
 

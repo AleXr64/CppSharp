@@ -31,7 +31,7 @@ namespace CppSharp.Generators.CSharp
                 return string.Empty;
 
             TypeMap typeMap;
-            if (TypeMapDatabase.FindTypeMap(tag.Declaration, out typeMap))
+            if (TypeMapDatabase.FindTypeMap(tag, out typeMap))
             {
                 typeMap.Type = tag;
 
@@ -133,6 +133,23 @@ namespace CppSharp.Generators.CSharp
             return $"{arrayType.Visit(this)}{arraySuffix}";
         }
 
+        public override TypePrinterResult VisitBuiltinType(BuiltinType builtin, TypeQualifiers quals)
+        {
+            TypeMap typeMap;
+            if (TypeMapDatabase.FindTypeMap(builtin, out typeMap))
+            {
+                var typePrinterContext = new TypePrinterContext()
+                {
+                    Kind = Kind,
+                    MarshalKind = MarshalKind,
+                    Type = builtin,
+                    Parameter = Parameter
+                };
+                return typeMap.CSharpSignatureType(typePrinterContext).Visit(this);
+            }
+            return base.VisitBuiltinType(builtin, quals);
+        }
+
         public override TypePrinterResult VisitFunctionType(FunctionType function,
             TypeQualifiers quals)
         {
@@ -184,16 +201,16 @@ namespace CppSharp.Generators.CSharp
 
             if (allowStrings && pointer.IsConstCharString())
             {
-                if (isManagedContext)
-                    return "string";
-                if (Parameter == null || Parameter.Name == Helpers.ReturnIdentifier)
-                    return IntPtrType;
-                if (Options.Encoding == Encoding.ASCII)
-                    return string.Format("[MarshalAs(UnmanagedType.LPStr)] string");
-                if (Options.Encoding == Encoding.Unicode ||
-                    Options.Encoding == Encoding.BigEndianUnicode)
-                    return string.Format("[MarshalAs(UnmanagedType.LPWStr)] string");
-                throw new NotSupportedException($"{Options.Encoding.EncodingName} is not supported yet.");
+                TypeMap typeMap;
+                TypeMapDatabase.FindTypeMap(pointer, out typeMap);
+                var typePrinterContext = new TypePrinterContext()
+                {
+                    Kind = Kind,
+                    MarshalKind = MarshalKind,
+                    Type = pointer.Pointee,
+                    Parameter = Parameter
+                };
+                return typeMap.CSharpSignatureType(typePrinterContext).Visit(this);
             }
 
             var pointee = pointer.Pointee.Desugar();
@@ -271,7 +288,7 @@ namespace CppSharp.Generators.CSharp
             var decl = typedef.Declaration;
 
             TypeMap typeMap;
-            if (TypeMapDatabase.FindTypeMap(decl, out typeMap))
+            if (TypeMapDatabase.FindTypeMap(decl.Type, out typeMap))
             {
                 typeMap.Type = typedef;
 
@@ -324,7 +341,6 @@ namespace CppSharp.Generators.CSharp
                 return decl.Visit(this);
             }
 
-            typeMap.Declaration = decl;
             typeMap.Type = template;
 
             var typePrinterContext = new TypePrinterContext
@@ -775,6 +791,40 @@ namespace CppSharp.Generators.CSharp
             var typePrinterResult = type.Visit(this);
             PopContext();
             return typePrinterResult;
+        }
+
+        public static Type GetSignedType(uint width)
+        {
+            switch (width)
+            {
+                case 8:
+                    return new CILType(typeof(sbyte));
+                case 16:
+                    return new CILType(typeof(short));
+                case 32:
+                    return new CILType(typeof(int));
+                case 64:
+                    return new CILType(typeof(long));
+                default:
+                    throw new System.NotSupportedException();
+            }
+        }
+
+        public static Type GetUnsignedType(uint width)
+        {
+            switch (width)
+            {
+                case 8:
+                    return new CILType(typeof(byte));
+                case 16:
+                    return new CILType(typeof(ushort));
+                case 32:
+                    return new CILType(typeof(uint));
+                case 64:
+                    return new CILType(typeof(ulong));
+                default:
+                    throw new System.NotSupportedException();
+            }
         }
 
         private static bool IsValid(TemplateArgument a)

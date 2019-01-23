@@ -3,7 +3,6 @@ using System.Linq;
 using System.Text;
 using CppSharp.AST;
 using CppSharp.AST.Extensions;
-using CppSharp.Generators.CSharp;
 using CppSharp.Types;
 using Delegate = CppSharp.AST.Delegate;
 using Type = CppSharp.AST.Type;
@@ -22,7 +21,6 @@ namespace CppSharp.Generators.CLI
             TypeMap typeMap;
             if (Context.Context.TypeMaps.FindTypeMap(type, out typeMap) && typeMap.DoesMarshalling)
             {
-                typeMap.Type = type;
                 typeMap.CLIMarshalToManaged(Context);
                 return false;
             }
@@ -62,10 +60,11 @@ namespace CppSharp.Generators.CLI
                     // const char* and const char[] are the same so we can use a string
                     if (array.Type.Desugar().IsPrimitiveType(PrimitiveType.Char) &&
                         array.QualifiedType.Qualifiers.IsConst)
-                        return VisitPointerType(new PointerType
-                            {
-                                QualifiedPointee = array.QualifiedType
-                            }, quals);
+                    {
+                        var pointer = new PointerType { QualifiedPointee = array.QualifiedType };
+                        Context.ReturnType = new QualifiedType(pointer);
+                        return this.VisitPointerType(pointer, quals);
+                    }
                     goto case ArrayType.ArraySize.Variable;
 
                 case ArrayType.ArraySize.Variable:
@@ -99,13 +98,6 @@ namespace CppSharp.Generators.CLI
             if (pointee.IsPrimitiveType(PrimitiveType.Void))
             {
                 Context.Return.Write("::System::IntPtr({0})", Context.ReturnVarName);
-                return true;
-            }
-
-            if (pointer.IsConstCharString())
-            {
-                Context.Return.Write(MarshalStringToManaged(Context.ReturnVarName,
-                    pointer.Pointee.Desugar() as BuiltinType));
                 return true;
             }
 
@@ -169,29 +161,6 @@ namespace CppSharp.Generators.CLI
             return pointer.QualifiedPointee.Visit(this);
         }
 
-        private string MarshalStringToManaged(string varName, BuiltinType type)
-        {
-            var encoding = type.Type == PrimitiveType.Char ?
-                Encoding.ASCII : Encoding.Unicode;
-
-            if (Equals(encoding, Encoding.ASCII))
-                encoding = Context.Context.Options.Encoding;
-
-            string param;
-            if (Equals(encoding, Encoding.ASCII))
-                param = "E_UTF8";
-            else if (Equals(encoding, Encoding.Unicode) ||
-                     Equals(encoding, Encoding.BigEndianUnicode))
-                param = "E_UTF16";
-            else
-                throw new NotSupportedException(string.Format("{0} is not supported yet.",
-                    Context.Context.Options.Encoding.EncodingName));
-
-            return string.Format(
-                "({0} == 0 ? nullptr : clix::marshalString<clix::{1}>({0}))",
-                varName, param);
-        }
-
         public override bool VisitMemberPointerType(MemberPointerType member,
             TypeQualifiers quals)
         {
@@ -239,7 +208,8 @@ namespace CppSharp.Generators.CLI
             var decl = typedef.Declaration;
 
             TypeMap typeMap;
-            if (Context.Context.TypeMaps.FindTypeMap(decl, out typeMap) && typeMap.DoesMarshalling)
+            if (Context.Context.TypeMaps.FindTypeMap(decl.Type, out typeMap) &&
+                typeMap.DoesMarshalling)
             {
                 typeMap.Type = typedef;
                 typeMap.CLIMarshalToManaged(Context);
@@ -300,7 +270,7 @@ namespace CppSharp.Generators.CLI
                 instance += "&";
 
             instance += Context.ReturnVarName;
-            var needsCopy = !(Context.Declaration is Field);
+            var needsCopy = Context.MarshalKind != MarshalKind.NativeField;
 
             if (@class.IsRefType && needsCopy)
             {
@@ -430,7 +400,6 @@ namespace CppSharp.Generators.CLI
             TypeMap typeMap;
             if (Context.Context.TypeMaps.FindTypeMap(type, out typeMap) && typeMap.DoesMarshalling)
             {
-                typeMap.Type = type;
                 typeMap.CLIMarshalToNative(Context);
                 return false;
             }
@@ -514,18 +483,6 @@ namespace CppSharp.Generators.CLI
                 return false;
 
             var pointee = pointer.Pointee.Desugar();
-
-            if ((pointee.IsPrimitiveType(PrimitiveType.Char) ||
-                pointee.IsPrimitiveType(PrimitiveType.WideChar)) &&
-                pointer.QualifiedPointee.Qualifiers.IsConst)
-            {
-                Context.Before.WriteLine(
-                    "auto _{0} = clix::marshalString<clix::E_UTF8>({1});",
-                    Context.ArgName, Context.Parameter.Name);
-
-                Context.Return.Write("_{0}.c_str()", Context.ArgName);
-                return true;
-            }
 
             if (pointee is FunctionType)
             {
@@ -611,7 +568,8 @@ namespace CppSharp.Generators.CLI
             var decl = typedef.Declaration;
 
             TypeMap typeMap;
-            if (Context.Context.TypeMaps.FindTypeMap(decl, out typeMap) && typeMap.DoesMarshalling)
+            if (Context.Context.TypeMaps.FindTypeMap(decl.Type, out typeMap) &&
+                typeMap.DoesMarshalling)
             {
                 typeMap.CLIMarshalToNative(Context);
                 return typeMap.IsValueType;
@@ -692,14 +650,15 @@ namespace CppSharp.Generators.CLI
 
         private void MarshalRefClass(Class @class)
         {
+            var type = Context.Parameter.Type.Desugar();
             TypeMap typeMap;
-            if (Context.Context.TypeMaps.FindTypeMap(@class, out typeMap) && typeMap.DoesMarshalling)
+            if (Context.Context.TypeMaps.FindTypeMap(type, out typeMap) &&
+                typeMap.DoesMarshalling)
             {
                 typeMap.CLIMarshalToNative(Context);
                 return;
             }
 
-            var type = Context.Parameter.Type.Desugar();
             var method = Context.Function as Method;
             if (type.IsReference() && (method == null ||
                 // redundant for comparison operators, they are handled in a special way

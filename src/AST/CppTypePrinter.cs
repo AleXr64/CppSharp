@@ -65,7 +65,7 @@ namespace CppSharp.AST
         {
             switch (modifier)
             {
-                case PointerType.TypeModifier.Value: return string.Empty;
+                case PointerType.TypeModifier.Value: return "[]";
                 case PointerType.TypeModifier.Pointer: return "*";
                 case PointerType.TypeModifier.LVReference: return "&";
                 case PointerType.TypeModifier.RVReference: return "&&";
@@ -181,7 +181,7 @@ namespace CppSharp.AST
         {
             FunctionType func;
             if (ResolveTypedefs && !typedef.Declaration.Type.IsPointerTo(out func))
-                return typedef.Declaration.Type.Visit(this);
+                return typedef.Declaration.Type.Visit(this, quals);
             var qual = GetStringQuals(quals);
             return $"{qual}{typedef.Declaration.Visit(this)}";
         }
@@ -444,8 +444,9 @@ namespace CppSharp.AST
                 return typedef.OriginalName;
 
             var originalNamespace = typedef.OriginalNamespace.Visit(this);
-            return originalNamespace == "::" ? typedef.OriginalName :
-                $"{originalNamespace}::{typedef.OriginalName}";
+            return string.IsNullOrEmpty(originalNamespace) ||
+                originalNamespace == "::" ?
+                typedef.OriginalName : $"{originalNamespace}::{typedef.OriginalName}";
         }
 
         public virtual string VisitTypeAliasDecl(TypeAlias typeAlias)
