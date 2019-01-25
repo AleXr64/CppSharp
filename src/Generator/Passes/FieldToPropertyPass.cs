@@ -23,7 +23,7 @@ namespace CppSharp.Passes
             if (@class == null)
                 return false;
 
-            if (ASTUtils.CheckIgnoreField(field))
+            if (!@class.IsPOD && ASTUtils.CheckIgnoreField(field))
                 return false;
 
             // Check if we already have a synthetized property.

@@ -673,7 +673,10 @@ namespace CppSharp.Generators.CSharp
 
             var extension = param.Kind == ParameterKind.Extension ? "this " : string.Empty;
             var usage = GetParameterUsage(param.Usage);
-
+            if (!hasName)
+            {
+                return $"{extension}{usage}{type}";
+            }
             if (param.DefaultArgument == null || !Options.GenerateDefaultValuesForArguments)
                 return $"{extension}{usage}{type} {param.Name}";
 

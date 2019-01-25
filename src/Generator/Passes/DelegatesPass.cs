@@ -67,6 +67,19 @@ namespace CppSharp.Passes
 
         public override bool VisitParameterDecl(Parameter parameter)
         {
+            // HACK: Restore loosed module in decl, because clang dont create node in AST
+            // for inline func decl as pointer as param in field that's is func pointer
+            // i.e. void (*func)(void(*_THAT_)()) as field.
+            if (onField != null)
+                {
+                if (!parameter.Namespace.Classes.Any(x => x.Fields.Contains(onField)))
+                {
+                    parameter.TranslationUnit.Module = onField.TranslationUnit.Module;
+                    IsInline = true;
+                }
+            }
+
+
             if (!base.VisitDeclaration(parameter) || parameter.Namespace == null ||
                 parameter.Namespace.Ignore)
                 return false;
@@ -76,6 +89,23 @@ namespace CppSharp.Passes
             return true;
         }
 
+        /// <summary>
+        /// Track current field of class
+        /// </summary>
+        private Field onField;
+        /// <summary>
+        /// Flag shows that "inline decl hack" fired
+        /// </summary>
+        private bool IsInline = false;
+        public override bool VisitFieldDecl(Field field)
+        {
+            // HACK: Track current filed to determine inline decl
+            onField = field;
+            var b = base.VisitFieldDecl(field);
+            IsInline = false;
+            onField = null;
+            return b;
+        }
         private QualifiedType CheckForDelegate(QualifiedType type, ITypedDecl decl)
         {
             if (type.Type is TypedefType)
@@ -102,6 +132,11 @@ namespace CppSharp.Passes
             FunctionType newFunctionType = GetNewFunctionType(typedDecl, type);
 
             var delegateName = GetDelegateName(newFunctionType);
+            //Mark inline delegate
+            if (IsInline)
+                {
+                    delegateName = delegateName.Insert(0, "Inline_");
+                }
             var access = typedDecl is Method ? AccessSpecifier.Private : AccessSpecifier.Public;
             var decl = (Declaration) typedDecl;
             Module module = decl.TranslationUnit.Module;
