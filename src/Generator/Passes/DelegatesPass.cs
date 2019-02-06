@@ -102,6 +102,10 @@ namespace CppSharp.Passes
             // HACK: Track current filed to determine inline decl
             onField = field;
             var b = base.VisitFieldDecl(field);
+            if(b && IsInline)
+                {
+                    CheckForDelegate(field.QualifiedType, field);
+                }
             IsInline = false;
             onField = null;
             return b;
@@ -135,7 +139,7 @@ namespace CppSharp.Passes
             //Mark inline delegate
             if (IsInline)
                 {
-                    delegateName = delegateName.Insert(0, "Inline_");
+                    delegateName = ((Declaration)typedDecl).OriginalName;
                 }
             var access = typedDecl is Method ? AccessSpecifier.Private : AccessSpecifier.Public;
             var decl = (Declaration) typedDecl;

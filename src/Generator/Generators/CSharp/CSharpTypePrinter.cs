@@ -305,8 +305,17 @@ namespace CppSharp.Generators.CSharp
             FunctionType func = decl.Type as FunctionType;
             if (func != null || decl.Type.IsPointerTo(out func))
             {
-                if (ContextKind == TypePrinterContextKind.Native)
+                if(ContextKind == TypePrinterContextKind.Native)
+                    {
+                        if(MarshalKind == MarshalKind.GenericDelegate)
+                            {
+                        return VisitDeclaration(decl);
+                    }
+
+                        
                     return IntPtrType;
+                }
+                    
                 // TODO: Use SafeIdentifier()
                 return VisitDeclaration(decl);
             }
